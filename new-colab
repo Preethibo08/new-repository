@@ -1,7 +1,10 @@
+<!DOCTYPE html>
 <html>
 <head>
-<title>first</title>
+  <title>Simple Page</title>
 </head>
-<body>Hi pavi</body>
+<body>
+  <h1>Hello, World!</h1>
+  <p>This is a 10 line HTML page.</p>
+</body>
 </html>
-
