@@ -1,10 +1,167 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Simple Page</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Secret Sharing & Commenting</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 10px;
+    }
+    h2 {
+      margin-top: 40px;
+    }
+    .secret {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+    .secret-header {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .comment {
+      background-color: #f0f0f0;
+      margin: 5px 0 5px 20px;
+      padding: 5px;
+      border-radius: 3px;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+      box-sizing: border-box;
+    }
+    button {
+      width: auto;
+      cursor: pointer;
+    }
+    .comment-form {
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Hello, World!</h1>
-  <p>This is a 10 line HTML page.</p>
+
+  <h1>Secret Sharing & Commenting</h1>
+
+  <section id="new-secret-section">
+    <h2>Share Your Secret</h2>
+    <input type="text" id="username" placeholder="Your name" required />
+    <textarea id="secret-text" placeholder="Write your secret here..." rows="3" required></textarea>
+    <button id="share-secret-btn">Share Secret</button>
+  </section>
+
+  <section id="secrets-section">
+    <h2>Secrets</h2>
+    <div id="secrets-container">
+      <!-- Secrets will appear here -->
+    </div>
+  </section>
+
+  <script>
+    // Array to hold secrets and comments
+    const secrets = [];
+
+    // DOM elements
+    const usernameInput = document.getElementById('username');
+    const secretTextInput = document.getElementById('secret-text');
+    const shareSecretBtn = document.getElementById('share-secret-btn');
+    const secretsContainer = document.getElementById('secrets-container');
+
+    // Function to render all secrets and their comments
+    function renderSecrets() {
+      secretsContainer.innerHTML = ''; // Clear container
+
+      secrets.forEach((secretObj, index) => {
+        const secretDiv = document.createElement('div');
+        secretDiv.className = 'secret';
+
+        const header = document.createElement('div');
+        header.className = 'secret-header';
+        header.textContent = `${secretObj.username} says:`;
+
+        const secretContent = document.createElement('div');
+        secretContent.textContent = secretObj.secret;
+
+        // Comments container
+        const commentsDiv = document.createElement('div');
+        secretObj.comments.forEach(comment => {
+          const commentDiv = document.createElement('div');
+          commentDiv.className = 'comment';
+          commentDiv.textContent = `${comment.username}: ${comment.text}`;
+          commentsDiv.appendChild(commentDiv);
+        });
+
+        // Comment form
+        const commentForm = document.createElement('div');
+        commentForm.className = 'comment-form';
+
+        const commentInput = document.createElement('input');
+        commentInput.type = 'text';
+        commentInput.placeholder = 'Your name';
+        commentInput.required = true;
+
+        const commentTextArea = document.createElement('textarea');
+        commentTextArea.rows = 2;
+        commentTextArea.placeholder = 'Write a comment...';
+        commentTextArea.required = true;
+
+        const commentBtn = document.createElement('button');
+        commentBtn.textContent = 'Comment';
+
+        commentBtn.addEventListener('click', () => {
+          const commenter = commentInput.value.trim();
+          const commentText = commentTextArea.value.trim();
+          if (!commenter || !commentText) {
+            alert('Please enter your name and comment.');
+            return;
+          }
+          // Add comment to secret
+          secretObj.comments.push({ username: commenter, text: commentText });
+          renderSecrets();
+        });
+
+        commentForm.appendChild(commentInput);
+        commentForm.appendChild(commentTextArea);
+        commentForm.appendChild(commentBtn);
+
+        secretDiv.appendChild(header);
+        secretDiv.appendChild(secretContent);
+        secretDiv.appendChild(commentsDiv);
+        secretDiv.appendChild(commentForm);
+
+        secretsContainer.appendChild(secretDiv);
+      });
+    }
+
+    // Event listener for sharing secret
+    shareSecretBtn.addEventListener('click', () => {
+      const username = usernameInput.value.trim();
+      const secret = secretTextInput.value.trim();
+
+      if (!username || !secret) {
+        alert('Please enter your name and a secret.');
+        return;
+      }
+
+      // Add new secret
+      secrets.push({ username, secret, comments: [] });
+
+      // Clear inputs
+      usernameInput.value = '';
+      secretTextInput.value = '';
+
+      renderSecrets();
+    });
+
+    // Initial render
+    renderSecrets();
+  </script>
+
 </body>
 </html>
